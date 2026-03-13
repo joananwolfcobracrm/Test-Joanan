@@ -1,64 +1,52 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 140 175" width="140" height="175">
-  <!-- 2D Elevation View (front) of Curtain: 1.4m wide x 1.75m high -->
-  <!-- Scale: 1 unit = 0.01m (1cm) -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-20 -30 1440 1810" width="280" height="350">
+  <!-- 2D Elevation View (front) of Curtain -->
+  <!-- 1400mm wide x 1750mm high, units in mm -->
 
   <!-- Curtain rod -->
-  <rect x="0" y="0" width="140" height="3" rx="1.5" ry="1.5" fill="#888888" stroke="#555555" stroke-width="0.5"/>
-
-  <!-- Rod finials (end caps) -->
-  <circle cx="2" cy="1.5" r="2.5" fill="#999999" stroke="#555555" stroke-width="0.4"/>
-  <circle cx="138" cy="1.5" r="2.5" fill="#999999" stroke="#555555" stroke-width="0.4"/>
+  <rect x="-20" y="-20" width="1440" height="10" rx="5" ry="5" fill="#777" stroke="#555" stroke-width="1"/>
+  <!-- Rod finials -->
+  <circle cx="-20" cy="-15" r="10" fill="#888" stroke="#555" stroke-width="1"/>
+  <circle cx="1420" cy="-15" r="10" fill="#888" stroke="#555" stroke-width="1"/>
 
   <!-- Curtain rings -->
-  <circle cx="10" cy="1.5" r="1.8" fill="none" stroke="#777777" stroke-width="0.6"/>
-  <circle cx="25" cy="1.5" r="1.8" fill="none" stroke="#777777" stroke-width="0.6"/>
-  <circle cx="40" cy="1.5" r="1.8" fill="none" stroke="#777777" stroke-width="0.6"/>
-  <circle cx="55" cy="1.5" r="1.8" fill="none" stroke="#777777" stroke-width="0.6"/>
-  <circle cx="70" cy="1.5" r="1.8" fill="none" stroke="#777777" stroke-width="0.6"/>
-  <circle cx="85" cy="1.5" r="1.8" fill="none" stroke="#777777" stroke-width="0.6"/>
-  <circle cx="100" cy="1.5" r="1.8" fill="none" stroke="#777777" stroke-width="0.6"/>
-  <circle cx="115" cy="1.5" r="1.8" fill="none" stroke="#777777" stroke-width="0.6"/>
-  <circle cx="130" cy="1.5" r="1.8" fill="none" stroke="#777777" stroke-width="0.6"/>
+  <circle cx="50" cy="-15" r="8" fill="none" stroke="#666" stroke-width="2"/>
+  <circle cx="170" cy="-15" r="8" fill="none" stroke="#666" stroke-width="2"/>
+  <circle cx="290" cy="-15" r="8" fill="none" stroke="#666" stroke-width="2"/>
+  <circle cx="410" cy="-15" r="8" fill="none" stroke="#666" stroke-width="2"/>
+  <circle cx="560" cy="-15" r="8" fill="none" stroke="#666" stroke-width="2"/>
+  <circle cx="840" cy="-15" r="8" fill="none" stroke="#666" stroke-width="2"/>
+  <circle cx="990" cy="-15" r="8" fill="none" stroke="#666" stroke-width="2"/>
+  <circle cx="1110" cy="-15" r="8" fill="none" stroke="#666" stroke-width="2"/>
+  <circle cx="1230" cy="-15" r="8" fill="none" stroke="#666" stroke-width="2"/>
+  <circle cx="1350" cy="-15" r="8" fill="none" stroke="#666" stroke-width="2"/>
 
   <!-- Left curtain panel -->
-  <path d="M5,4
-    C5,4 8,20 6,40
-    C4,60 9,80 7,100
-    C5,120 8,140 6,160
-    L6,172
-    C6,174 8,175 10,175
-    L65,175
-    C65,175 63,170 65,160
-    C67,140 62,120 64,100
-    C66,80 61,60 63,40
-    C65,20 68,4 68,4 Z"
-    fill="#c8c8c8" stroke="#888888" stroke-width="0.5"/>
+  <path d="M0,0
+    C10,0 10,1740 5,1750
+    L680,1750
+    C675,1740 675,0 680,0 Z"
+    fill="#c0c0c0" stroke="#999" stroke-width="1"/>
 
-  <!-- Left curtain vertical fold lines -->
-  <path d="M15,5 C13,50 17,100 14,170" fill="none" stroke="#aaaaaa" stroke-width="0.4"/>
-  <path d="M25,5 C27,50 23,100 26,170" fill="none" stroke="#aaaaaa" stroke-width="0.4"/>
-  <path d="M35,5 C33,50 37,100 34,170" fill="none" stroke="#aaaaaa" stroke-width="0.4"/>
-  <path d="M45,5 C47,50 43,100 46,170" fill="none" stroke="#aaaaaa" stroke-width="0.4"/>
-  <path d="M55,5 C53,50 57,100 54,170" fill="none" stroke="#aaaaaa" stroke-width="0.4"/>
+  <!-- Left panel fold lines -->
+  <path d="M100,0 C95,400 105,900 98,1750" fill="none" stroke="#a8a8a8" stroke-width="2"/>
+  <path d="M200,0 C205,350 195,850 202,1750" fill="none" stroke="#b0b0b0" stroke-width="1.5"/>
+  <path d="M300,0 C295,400 305,900 298,1750" fill="none" stroke="#a8a8a8" stroke-width="2"/>
+  <path d="M400,0 C405,350 395,850 402,1750" fill="none" stroke="#b0b0b0" stroke-width="1.5"/>
+  <path d="M500,0 C495,400 505,900 498,1750" fill="none" stroke="#a8a8a8" stroke-width="2"/>
+  <path d="M600,0 C605,350 595,850 602,1750" fill="none" stroke="#b0b0b0" stroke-width="1.5"/>
 
   <!-- Right curtain panel -->
-  <path d="M72,4
-    C72,4 75,20 73,40
-    C71,60 76,80 74,100
-    C72,120 75,140 73,160
-    L73,172
-    C73,174 75,175 77,175
-    L135,175
-    C135,175 133,170 135,160
-    C137,140 132,120 134,100
-    C136,80 131,60 133,40
-    C135,20 132,4 132,4 Z"
-    fill="#c8c8c8" stroke="#888888" stroke-width="0.5"/>
+  <path d="M720,0
+    C730,0 730,1740 725,1750
+    L1400,1750
+    C1395,1740 1395,0 1400,0 Z"
+    fill="#c0c0c0" stroke="#999" stroke-width="1"/>
 
-  <!-- Right curtain vertical fold lines -->
-  <path d="M82,5 C84,50 80,100 83,170" fill="none" stroke="#aaaaaa" stroke-width="0.4"/>
-  <path d="M92,5 C90,50 94,100 91,170" fill="none" stroke="#aaaaaa" stroke-width="0.4"/>
-  <path d="M102,5 C104,50 100,100 103,170" fill="none" stroke="#aaaaaa" stroke-width="0.4"/>
-  <path d="M112,5 C110,50 114,100 111,170" fill="none" stroke="#aaaaaa" stroke-width="0.4"/>
-  <path d="M122,5 C124,50 120,100 123,170" fill="none" stroke="#aaaaaa" stroke-width="0.4"/>
+  <!-- Right panel fold lines -->
+  <path d="M820,0 C815,400 825,900 818,1750" fill="none" stroke="#a8a8a8" stroke-width="2"/>
+  <path d="M920,0 C925,350 915,850 922,1750" fill="none" stroke="#b0b0b0" stroke-width="1.5"/>
+  <path d="M1020,0 C1015,400 1025,900 1018,1750" fill="none" stroke="#a8a8a8" stroke-width="2"/>
+  <path d="M1120,0 C1125,350 1115,850 1122,1750" fill="none" stroke="#b0b0b0" stroke-width="1.5"/>
+  <path d="M1220,0 C1215,400 1225,900 1218,1750" fill="none" stroke="#a8a8a8" stroke-width="2"/>
+  <path d="M1320,0 C1325,350 1315,850 1322,1750" fill="none" stroke="#b0b0b0" stroke-width="1.5"/>
 </svg>

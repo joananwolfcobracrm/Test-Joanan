@@ -1,11 +1,27 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 140 10" width="140" height="10">
-  <!-- 2D Top View of Curtain: 1.4m wide x 0.01m deep -->
-  <!-- Scale: 1 unit = 0.01m (1cm) -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 50" width="280" height="10">
+  <!-- 2D Top View of Curtain: 1400mm wide x 50mm deep -->
+  <!-- Centered, wall at top (Y=0), room toward bottom -->
 
-  <!-- Curtain rail/rod -->
-  <rect x="0" y="2" width="140" height="2" fill="#888888" stroke="#555555" stroke-width="0.5"/>
+  <!-- Wall line -->
+  <line x1="0" y1="0" x2="1400" y2="0" stroke="#999" stroke-width="1"/>
 
-  <!-- Curtain fabric folds - seen from above as zigzag -->
-  <polyline points="0,5 5,3 10,7 15,3 20,7 25,3 30,7 35,3 40,7 45,3 50,7 55,3 60,7 65,3 70,7 75,3 80,7 85,3 90,7 95,3 100,7 105,3 110,7 115,3 120,7 125,3 130,7 135,3 140,5"
-    fill="none" stroke="#444444" stroke-width="1"/>
+  <!-- Left curtain panel folds (from above) -->
+  <path d="M0,2 L20,2 Q70,40 120,2 Q170,45 220,2 Q270,40 320,2 Q370,45 420,2 Q470,40 520,2 Q570,45 620,2 L680,2"
+    fill="#b0b0b0" stroke="#666" stroke-width="1.5"/>
+  <path d="M0,2 L20,2 Q70,40 120,2 Q170,45 220,2 Q270,40 320,2 Q370,45 420,2 Q470,40 520,2 Q570,45 620,2 L680,2"
+    fill="none" stroke="#888" stroke-width="0.5"/>
+
+  <!-- Gap between panels -->
+
+  <!-- Right curtain panel folds (from above) -->
+  <path d="M720,2 L760,2 Q810,45 860,2 Q910,40 960,2 Q1010,45 1060,2 Q1110,40 1160,2 Q1210,45 1260,2 Q1310,40 1360,2 L1400,2"
+    fill="#b0b0b0" stroke="#666" stroke-width="1.5"/>
+  <path d="M720,2 L760,2 Q810,45 860,2 Q910,40 960,2 Q1010,45 1060,2 Q1110,40 1160,2 Q1210,45 1260,2 Q1310,40 1360,2 L1400,2"
+    fill="none" stroke="#888" stroke-width="0.5"/>
+
+  <!-- Curtain rod -->
+  <line x1="-20" y1="5" x2="1420" y2="5" stroke="#555" stroke-width="3"/>
+  <!-- Rod finials -->
+  <circle cx="-20" cy="5" r="5" fill="#666"/>
+  <circle cx="1420" cy="5" r="5" fill="#666"/>
 </svg>
