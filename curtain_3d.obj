@@ -1,29 +1,29 @@
 # Curtain wall object for magicplan
 # 1 unit = 1mm
-# Pivot at center of backside = origin (0, 0, 0)
-# X: -700 to 700 (width 1400)
+# Pivot at (0, 0, 0) = bottom-center of backside
+# X: -700 to 700 (width 1400, centered)
 # Y: 0 to -50 (depth 50, back at wall Y=0)
-# Z: -875 to 875 (height 1750, centered on pivot)
+# Z: 0 to 1750 (height 1750, bottom at 0)
 
 # Left panel
-v -700 0 -875
-v -20 0 -875
-v -20 0 875
-v -700 0 875
-v -700 -50 -875
-v -20 -50 -875
-v -20 -50 875
-v -700 -50 875
+v -700 0 0
+v -20 0 0
+v -20 0 1750
+v -700 0 1750
+v -700 -50 0
+v -20 -50 0
+v -20 -50 1750
+v -700 -50 1750
 
 # Right panel
-v 20 0 -875
-v 700 0 -875
-v 700 0 875
-v 20 0 875
-v 20 -50 -875
-v 700 -50 -875
-v 700 -50 875
-v 20 -50 875
+v 20 0 0
+v 700 0 0
+v 700 0 1750
+v 20 0 1750
+v 20 -50 0
+v 700 -50 0
+v 700 -50 1750
+v 20 -50 1750
 
 # Left panel faces
 f 1 2 3 4
