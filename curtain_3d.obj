@@ -1,66 +1,75 @@
-# Curtain - Wall Object
+# Curtain wall object for magicplan
 # 1 unit = 1mm
-# Back at Y=0 (wall), front at Y=-5
+# Pivot: center of backside (0, 0, 875)
+# Back at Y=0 (wall), curtain extends toward -Y
+# X: -700 to 700 (1400mm width)
+# Z: 0 to 1750 (1750mm height)
 
-# Left panel
+# === LEFT CURTAIN PANEL ===
+v -700 0 0
+v -30 0 0
+v -30 0 1750
+v -700 0 1750
 v -700 -5 0
-v -20 -5 0
-v -20 -5 1750
+v -30 -5 0
+v -30 -5 1750
 v -700 -5 1750
 
-# Right panel
-v 20 -5 0
+# === RIGHT CURTAIN PANEL ===
+v 30 0 0
+v 700 0 0
+v 700 0 1750
+v 30 0 1750
+v 30 -5 0
 v 700 -5 0
 v 700 -5 1750
-v 20 -5 1750
+v 30 -5 1750
 
-# Curtain rod
-v -720 0 1755
-v 720 0 1755
-v 720 0 1775
-v -720 0 1775
-v -720 -12 1755
-v 720 -12 1755
-v 720 -12 1775
-v -720 -12 1775
+# === CURTAIN ROD ===
+v -720 0 1760
+v 720 0 1760
+v 720 0 1780
+v -720 0 1780
+v -720 -15 1760
+v 720 -15 1760
+v 720 -15 1780
+v -720 -15 1780
 
-# Normals
-vn 0 -1 0
-vn 0 1 0
-vn 0 0 1
-vn 0 0 -1
-vn 1 0 0
-vn -1 0 0
+# Left panel - back face (wall side, normal +Y)
+f 4 3 2 1
+# Left panel - front face (room side, normal -Y)
+f 5 6 7 8
+# Left panel - top edge
+f 4 8 7 3
+# Left panel - bottom edge
+f 1 2 6 5
+# Left panel - left edge
+f 1 5 8 4
+# Left panel - right edge
+f 2 3 7 6
 
-# Left panel front
-f 1//1 2//1 3//1
-f 1//1 3//1 4//1
-# Left panel back
-f 2//2 1//2 4//2
-f 2//2 4//2 3//2
+# Right panel - back face
+f 12 11 10 9
+# Right panel - front face
+f 13 14 15 16
+# Right panel - top edge
+f 12 16 15 11
+# Right panel - bottom edge
+f 9 10 14 13
+# Right panel - left edge
+f 9 13 16 12
+# Right panel - right edge
+f 10 11 15 14
 
-# Right panel front
-f 5//1 6//1 7//1
-f 5//1 7//1 8//1
-# Right panel back
-f 6//2 5//2 8//2
-f 6//2 8//2 7//2
-
-# Rod back
-f 9//2 10//2 11//2
-f 9//2 11//2 12//2
-# Rod front
-f 14//1 13//1 16//1
-f 14//1 16//1 15//1
-# Rod bottom
-f 9//4 13//4 14//4
-f 9//4 14//4 10//4
-# Rod top
-f 12//3 11//3 15//3
-f 12//3 15//3 16//3
-# Rod left
-f 9//6 12//6 16//6
-f 9//6 16//6 13//6
-# Rod right
-f 10//5 14//5 15//5
-f 10//5 15//5 11//5
+# Rod - back face
+f 20 19 18 17
+# Rod - front face
+f 21 22 23 24
+# Rod - top face
+f 20 24 23 19
+# Rod - bottom face
+f 17 18 22 21
+# Rod - left face
+f 17 21 24 20
+# Rod - right face
+f 18 19 23 22
