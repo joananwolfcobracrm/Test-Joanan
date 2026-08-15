@@ -133,7 +133,7 @@
 <div class="sheet" id="psheet">
   <div class="sheet-in">
     <h2>Spelers</h2>
-    <p>Namen aanpassen, toevoegen of verwijderen (max 8).</p>
+    <p>Namen aanpassen of spelers toevoegen. Minimaal 2, maximaal 8.</p>
     <div class="setup" style="padding:0">
       <div id="plist"></div>
       <button class="btn" id="pAdd">+ Speler toevoegen</button>
@@ -169,6 +169,7 @@
   const UPPER = ['d1','d2','d3','d4','d5','d6'];
   const BONUS_AT = 63, BONUS = 35;
   const KEY = 'yatzee.v1';
+  const MIN_P = 2, MAX_P = 8;
 
   // --- state -------------------------------------------------------------
   let S = load() || newGame(['Speler 1','Speler 2']);
@@ -177,7 +178,7 @@
   function load(){
     try {
       const o = JSON.parse(localStorage.getItem(KEY));
-      return (o && Array.isArray(o.players) && o.players.length) ? o : null;
+      return (o && Array.isArray(o.players) && o.players.length >= MIN_P) ? o : null;
     } catch(e){ return null; }
   }
   function save(){ try{ localStorage.setItem(KEY, JSON.stringify(S)); }catch(e){} }
@@ -284,8 +285,9 @@
     $('plist').innerHTML = S.players.map((p,i) => `
       <div class="prow">
         <input type="text" value="${esc(p.name)}" data-i="${i}" maxlength="14" placeholder="Naam">
-        ${S.players.length > 1 ? `<button class="del" data-del="${i}">✕</button>` : ''}
+        ${S.players.length > MIN_P ? `<button class="del" data-del="${i}">✕</button>` : ''}
       </div>`).join('');
+    $('pAdd').style.display = S.players.length >= MAX_P ? 'none' : '';
   }
   $('plist').addEventListener('input', e => {
     if (e.target.tagName === 'INPUT') {
@@ -302,7 +304,7 @@
     }
   });
   $('pAdd').onclick = () => {
-    if (S.players.length >= 8) return;
+    if (S.players.length >= MAX_P) return;
     S.players.push({name:`Speler ${S.players.length+1}`, sc:{}});
     save(); renderPlayers(); render();
   };
