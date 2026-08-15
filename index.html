@@ -58,6 +58,8 @@
   td.score{min-width:72px; font-size:19px; font-weight:600; font-variant-numeric:tabular-nums}
   td.score.empty{color:#3d444d}
   td.score.zero{color:var(--bad)}
+  td.score.void{color:var(--dim); text-decoration:line-through}
+  td.score.yb{color:var(--good)}
   td.score:active{background:#1c2430}
   tr.calc td, tr.calc .cat{background:#131a22; font-weight:700}
   tr.calc td{color:var(--dim); font-size:16px}
@@ -164,6 +166,7 @@
     {id:'ss', name:'Kleine straat', hint:'4 op een rij',     kind:'fixed', val:30},
     {id:'ls', name:'Grote straat',  hint:'5 op een rij',     kind:'fixed', val:40},
     {id:'yz', name:'Yatzee',        hint:'5 gelijk',         kind:'fixed', val:50},
+    {id:'yb', name:'Yatzee bonus',  hint:'+100 per extra Yatzee', kind:'yb', step:100, opt:true},
     {id:'ch', name:'Chance',        hint:'Som van alle 5 stenen', kind:'sum'}
   ];
   const UPPER = ['d1','d2','d3','d4','d5','d6'];
@@ -186,11 +189,14 @@
   // --- berekening --------------------------------------------------------
   const upperSum = p => UPPER.reduce((t,id) => t + (p.sc[id] ?? 0), 0);
   const hasBonus = p => upperSum(p) >= BONUS_AT;
+  // Extra Yatzees tellen alleen mee als het Yatzee-vak zelf 50 scoorde.
+  const ybOK     = p => p.sc.yz === 50;
   const lowerSum = p => CATS.filter(c => !UPPER.includes(c.id))
-                            .reduce((t,c) => t + (p.sc[c.id] ?? 0), 0);
+                            .reduce((t,c) => t + (c.id === 'yb' && !ybOK(p) ? 0 : (p.sc[c.id] ?? 0)), 0);
   const total    = p => upperSum(p) + (hasBonus(p) ? BONUS : 0) + lowerSum(p);
-  const filled   = p => CATS.filter(c => p.sc[c.id] != null).length;
-  const done     = () => S.players.every(p => filled(p) === CATS.length);
+  const REQ      = CATS.filter(c => !c.opt);            // bonusrij is optioneel
+  const filled   = p => REQ.filter(c => p.sc[c.id] != null).length;
+  const done     = () => S.players.every(p => filled(p) === REQ.length);
 
   // --- rendering ---------------------------------------------------------
   const $ = id => document.getElementById(id);
@@ -213,8 +219,14 @@
       let r = `<tr><td class="cat">${c.name}<small>${c.hint}</small></td>`;
       S.players.forEach((p,i) => {
         const v = p.sc[c.id];
-        const cls = v == null ? 'empty' : (v === 0 ? 'zero' : '');
-        r += `<td class="score ${cls}" data-p="${i}" data-c="${c.id}">${v == null ? '–' : v}</td>`;
+        let cls = v == null ? 'empty' : (v === 0 ? 'zero' : '');
+        if (c.id === 'yb') {
+          // 0 extra Yatzees is geen doorgestreept vak, dus niet rood.
+          // Wel doorstrepen als de bonus niet meetelt (Yatzee-vak niet 50).
+          cls = v == null || v === 0 ? 'empty' : (ybOK(p) ? 'yb' : 'void');
+        }
+        const txt = v == null ? '–' : (c.id === 'yb' && v > 0 ? '+' + v : v);
+        r += `<td class="score ${cls}" data-p="${i}" data-c="${c.id}">${txt}</td>`;
       });
       return r + '</tr>';
     };
@@ -253,14 +265,19 @@
   function options(c){
     if (c.kind === 'face') return [0,1,2,3,4,5].map(n => n * c.face);
     if (c.kind === 'sum')  { const a=[0]; for(let n=5;n<=30;n++) a.push(n); return a; }
+    if (c.kind === 'yb')   return [0,1,2,3,4,5,6].map(n => n * c.step);
     return [0, c.val];
   }
 
   function openSheet(pi, cid){
     const c = CATS.find(x => x.id === cid);
+    const p = S.players[pi];
     cur = {pi, cid};
-    $('shTitle').textContent = `${c.name} — ${S.players[pi].name}`;
-    $('shHint').textContent = c.hint;
+    $('shTitle').textContent = `${c.name} — ${p.name}`;
+    // De Yatzee-bonus vervalt als het Yatzee-vak op 0 staat.
+    $('shHint').textContent = (c.kind === 'yb' && p.sc.yz === 0)
+      ? 'Vervalt: Yatzee staat op 0, dus geen bonus.'
+      : c.hint;
     $('shOpts').innerHTML = options(c)
       .map(v => `<button class="opt${v===0?' zero':''}" data-v="${v}">${v}</button>`).join('');
     $('sheet').classList.add('on');
