@@ -40,20 +40,21 @@
     --scrim:rgba(0,0,0,.6);
   }
   *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-  html,body{margin:0;padding:0;height:100%}
+  html,body{margin:0;padding:0}
   body{
     background:var(--bg); color:var(--txt);
     font:16px/1.3 -apple-system,BlinkMacSystemFont,"SF Pro Text",system-ui,sans-serif;
-    padding-top:env(safe-area-inset-top);
     -webkit-user-select:none; user-select:none;
     overscroll-behavior:none;
+    display:flex; flex-direction:column; height:100vh; height:100dvh;
   }
   button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+  :focus-visible{outline:2px solid var(--acc); outline-offset:2px}
 
   header{
-    display:flex; align-items:center; gap:10px;
-    padding:10px 14px; border-bottom:1px solid var(--line);
-    background:var(--panel); position:sticky; top:0; z-index:5;
+    flex:none; display:flex; align-items:center; gap:10px;
+    padding:calc(10px + env(safe-area-inset-top)) 14px 10px;
+    border-bottom:1px solid var(--line); background:var(--panel);
   }
   header h1{font-size:17px;margin:0;font-weight:700;letter-spacing:.3px;flex:1;
     overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
@@ -64,9 +65,23 @@
   .btn:active{background:var(--btn-a)}
   .btn-icon{padding:8px 10px; font-size:15px; line-height:1.2}
   .btn-acc{background:var(--acc); color:var(--on-acc); border-color:var(--acc)}
+  .hide{display:none !important}
 
-  /* ---------- scorecard ---------- */
-  .wrap{overflow:auto; -webkit-overflow-scrolling:touch; padding-bottom:40px}
+  /* ---------- views + tabbalk ---------- */
+  .view{flex:1; overflow:auto; -webkit-overflow-scrolling:touch; display:none}
+  .view.on{display:block}
+  nav.tabs{
+    flex:none; display:flex; border-top:1px solid var(--line); background:var(--panel);
+    padding-bottom:env(safe-area-inset-bottom);
+  }
+  nav.tabs button{
+    flex:1; padding:12px 4px; font-size:13px; font-weight:600; color:var(--dim);
+    border-top:2px solid transparent; margin-top:-1px;
+  }
+  nav.tabs button.on{color:var(--acc); border-top-color:var(--acc)}
+
+  /* ---------- scorekaart ---------- */
+  #vGame{padding-bottom:20px}
   table{border-collapse:separate; border-spacing:0; width:max-content; min-width:100%}
   th,td{border-bottom:1px solid var(--line-soft); text-align:center; height:var(--cell)}
   thead th{
@@ -96,7 +111,45 @@
   .plead{color:var(--acc)}
   .ptot{display:block; color:var(--dim); font-size:12px; font-weight:600}
 
-  /* ---------- sheet ---------- */
+  .banner{
+    display:flex; align-items:center; gap:10px; padding:10px 14px;
+    background:var(--calc); border-bottom:1px solid var(--line); font-size:14px;
+  }
+  .banner span{flex:1}
+  .banner .btn{white-space:nowrap}
+
+  /* ---------- statistieken ---------- */
+  .stats{padding:14px 14px 24px; display:flex; flex-direction:column; gap:18px}
+  .stats h2{font-size:13px; letter-spacing:.6px; text-transform:uppercase;
+    color:var(--dim); margin:0 0 8px; font-weight:700}
+  .stack{display:flex; flex-direction:column; gap:8px}
+  .empty-note{color:var(--dim); font-size:14px; line-height:1.5}
+
+  .pcard{background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:12px 14px}
+  .pc-top{display:flex; align-items:baseline; gap:8px}
+  .pc-name{font-weight:700; font-size:16px; flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
+  .pc-avg{font-size:20px; font-weight:700; color:var(--acc); font-variant-numeric:tabular-nums}
+  .pc-avg small{font-size:11px; color:var(--dim); font-weight:600; margin-left:3px}
+  .pc-sub{color:var(--dim); font-size:12.5px; margin-top:3px; font-variant-numeric:tabular-nums}
+  .pc-spark{display:flex; align-items:center; gap:8px; margin-top:8px}
+  .pc-spark svg{display:block; max-width:100%}
+  .pc-last{font-size:12px; color:var(--dim); font-variant-numeric:tabular-nums}
+
+  .rec{display:flex; gap:10px; align-items:baseline; padding:9px 0; border-bottom:1px solid var(--line-soft)}
+  .rec:last-child{border-bottom:0}
+  .rec b{font-size:16px; font-variant-numeric:tabular-nums; min-width:52px}
+  .rec-lb{flex:1; font-size:13px}
+  .rec-lb small{display:block; color:var(--dim); font-size:11.5px}
+
+  .hrow{display:flex; align-items:center; gap:10px; padding:10px 0; border-bottom:1px solid var(--line-soft)}
+  .hrow:last-child{border-bottom:0}
+  .hrow .h-main{flex:1; min-width:0}
+  .hrow .h-date{color:var(--dim); font-size:11.5px}
+  .hrow .h-players{font-size:13.5px; margin-top:2px; font-variant-numeric:tabular-nums}
+  .hrow .h-win{color:var(--acc); font-weight:700}
+  .hrow .h-del{padding:8px 6px; color:var(--dim); font-size:16px; line-height:1}
+
+  /* ---------- sheets ---------- */
   .sheet{
     position:fixed; inset:0; z-index:20; display:none;
     background:var(--scrim); backdrop-filter:blur(2px);
@@ -110,6 +163,7 @@
     /* Lange keuzelijsten scrollen binnen de kaart; knoppen blijven bereikbaar. */
     max-height:88vh; display:flex; flex-direction:column;
   }
+  @media (prefers-reduced-motion:reduce){ .sheet-in{animation:none} }
   @keyframes up{from{transform:translateY(100%)}to{transform:translateY(0)}}
   .sheet h2{margin:0 0 2px; font-size:18px}
   .sheet p{margin:0 0 12px; color:var(--dim); font-size:13px}
@@ -123,8 +177,10 @@
   .opt.zero{color:var(--bad)}
   .sheet-foot{display:flex; gap:8px; margin-top:14px}
   .sheet-foot .btn{flex:1; text-align:center; padding:13px}
+  .sheet-stack{display:flex; flex-direction:column; gap:8px; overflow-y:auto}
+  .sheet-stack .btn{width:100%; text-align:center; padding:14px}
 
-  /* ---------- setup ---------- */
+  /* ---------- spelers + back-up ---------- */
   .setup{padding:18px 16px calc(24px + env(safe-area-inset-bottom))}
   .setup h2{font-size:16px; margin:0 0 12px}
   .prow{display:flex; gap:8px; align-items:center; margin-bottom:8px}
@@ -136,6 +192,13 @@
   .prow input:focus{outline:none; border-color:var(--acc)}
   .prow .del{padding:12px 14px; color:var(--bad); font-size:20px; line-height:1}
   .setup .btn{width:100%; text-align:center; padding:14px; margin-top:8px}
+  #bkText{
+    width:100%; height:120px; padding:10px; border-radius:11px; background:var(--input);
+    border:1px solid var(--line); color:var(--txt); font-size:12px;
+    font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
+    -webkit-user-select:text; user-select:text; resize:none;
+  }
+  #bkMsg{min-height:18px; font-size:12.5px; color:var(--dim); margin:8px 0 0}
 </style>
 </head>
 <body>
@@ -145,9 +208,23 @@
   <button class="btn btn-icon" id="btnTheme" aria-label="Thema"></button>
   <button class="btn" id="btnPlayers">Spelers</button>
   <button class="btn" id="btnNew">Nieuw</button>
+  <button class="btn hide" id="btnBackup">Back-up</button>
 </header>
 
-<div class="wrap"><table id="card"></table></div>
+<div class="view on" id="vGame">
+  <div class="banner hide" id="banner">
+    <span>Potje compleet.</span>
+    <button class="btn btn-acc" id="btnFinish">Opslaan</button>
+  </div>
+  <table id="card"></table>
+</div>
+
+<div class="view" id="vStats"><div class="stats" id="statsBody"></div></div>
+
+<nav class="tabs">
+  <button class="on" data-view="vGame">Scorekaart</button>
+  <button data-view="vStats">Statistieken</button>
+</nav>
 
 <div class="sheet" id="sheet">
   <div class="sheet-in">
@@ -161,14 +238,36 @@
   </div>
 </div>
 
+<div class="sheet" id="csheet">
+  <div class="sheet-in">
+    <h2 id="cTitle"></h2>
+    <p id="cText"></p>
+    <div class="sheet-stack" id="cBtns"></div>
+  </div>
+</div>
+
 <div class="sheet" id="psheet">
   <div class="sheet-in">
     <h2>Spelers</h2>
     <p>Namen aanpassen of spelers toevoegen. Minimaal 2, maximaal 8.</p>
-    <div class="setup" style="padding:0">
+    <div class="setup" style="padding:0; overflow-y:auto">
       <div id="plist"></div>
       <button class="btn" id="pAdd">+ Speler toevoegen</button>
       <button class="btn btn-acc" id="pDone">Klaar</button>
+    </div>
+  </div>
+</div>
+
+<div class="sheet" id="bsheet">
+  <div class="sheet-in">
+    <h2>Back-up</h2>
+    <p>Kopieer deze tekst en plak 'm op een ander toestel om je historie mee te nemen.</p>
+    <textarea id="bkText" spellcheck="false" autocapitalize="off" autocorrect="off"></textarea>
+    <p id="bkMsg"></p>
+    <div class="sheet-foot">
+      <button class="btn" id="bkCopy">Kopieer</button>
+      <button class="btn" id="bkImport">Importeer</button>
+      <button class="btn" id="bkClose">Sluiten</button>
     </div>
   </div>
 </div>
@@ -181,7 +280,7 @@
   // kind: 'face'  = bovenvak (aantal ogen x waarde)
   //       'sum'   = som van alle 5 dobbelstenen (5..30)
   //       'fixed' = vaste score of 0
-  //       'straat'= vaste score of 0
+  //       'yb'    = bonusrij, veelvoud van 100
   const CATS = [
     {id:'d1', name:'Enen',          hint:'1 punt per één',   kind:'face', face:1},
     {id:'d2', name:'Tweeën',        hint:'2 punten per twee',kind:'face', face:2},
@@ -200,11 +299,12 @@
   ];
   const UPPER = ['d1','d2','d3','d4','d5','d6'];
   const BONUS_AT = 63, BONUS = 35;
-  const KEY = 'yatzee.v1';
+  const KEY = 'yatzee.v1', HKEY = 'yatzee.hist.v1';
   const MIN_P = 2, MAX_P = 8;
 
   // --- state -------------------------------------------------------------
   let S = load() || newGame(['Speler 1','Speler 2']);
+  let H = loadHist();
 
   function newGame(names){ return {players: names.map(n => ({name:n, sc:{}}))}; }
   function load(){
@@ -213,7 +313,14 @@
       return (o && Array.isArray(o.players) && o.players.length >= MIN_P) ? o : null;
     } catch(e){ return null; }
   }
+  function loadHist(){
+    try {
+      const a = JSON.parse(localStorage.getItem(HKEY));
+      return Array.isArray(a) ? a : [];
+    } catch(e){ return []; }
+  }
   function save(){ try{ localStorage.setItem(KEY, JSON.stringify(S)); }catch(e){} }
+  function saveHist(){ try{ localStorage.setItem(HKEY, JSON.stringify(H)); }catch(e){} }
 
   // --- berekening --------------------------------------------------------
   const upperSum = p => UPPER.reduce((t,id) => t + (p.sc[id] ?? 0), 0);
@@ -226,8 +333,11 @@
   const REQ      = CATS.filter(c => !c.opt);            // bonusrij is optioneel
   const filled   = p => REQ.filter(c => p.sc[c.id] != null).length;
   const done     = () => S.players.every(p => filled(p) === REQ.length);
+  const started  = () => S.players.some(p => Object.keys(p.sc).length > 0);
+  // Aantal Yatzees: het vak zelf plus elke bonus van 100.
+  const yatzees  = p => ybOK(p) ? 1 + (p.sc.yb || 0) / 100 : 0;
 
-  // --- rendering ---------------------------------------------------------
+  // --- rendering scorekaart ----------------------------------------------
   const $ = id => document.getElementById(id);
   const card = $('card');
 
@@ -278,6 +388,7 @@
     h += '</tr></tbody>';
 
     card.innerHTML = h;
+    $('banner').classList.toggle('hide', !anyDone);
   }
 
   const esc = s => String(s).replace(/[&<>"]/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]));
@@ -326,6 +437,239 @@
   $('sheet').addEventListener('click', e => { if (e.target.id === 'sheet') close(); });
   function close(){ $('sheet').classList.remove('on'); cur = null; }
 
+  // --- keuzesheet (in plaats van confirm) --------------------------------
+  function ask(title, text, choices){
+    $('cTitle').textContent = title;
+    $('cText').textContent = text;
+    const box = $('cBtns');
+    box.innerHTML = '';
+    choices.forEach((ch, i) => {
+      const b = document.createElement('button');
+      b.className = 'btn' + (ch.primary ? ' btn-acc' : '');
+      b.textContent = ch.label;
+      b.onclick = () => { $('csheet').classList.remove('on'); if (ch.fn) ch.fn(); };
+      box.appendChild(b);
+    });
+    const cancel = document.createElement('button');
+    cancel.className = 'btn';
+    cancel.textContent = 'Annuleren';
+    cancel.onclick = () => $('csheet').classList.remove('on');
+    box.appendChild(cancel);
+    $('csheet').classList.add('on');
+  }
+  $('csheet').addEventListener('click', e => {
+    if (e.target.id === 'csheet') $('csheet').classList.remove('on');
+  });
+
+  // --- historie ----------------------------------------------------------
+  function archive(){
+    H.push({
+      ts: new Date().toISOString(),
+      players: S.players.map(p => ({
+        name: p.name.trim() || 'Speler',
+        sc: {...p.sc},
+        total: total(p),
+        bonus: hasBonus(p),
+        yatzees: yatzees(p)
+      }))
+    });
+    saveHist();
+  }
+  function resetScores(){
+    S.players.forEach(p => p.sc = {});
+    save(); render();
+  }
+  $('btnFinish').onclick = () => {
+    archive(); resetScores(); renderStats();
+    ask('Opgeslagen', 'Het potje staat in je historie. De namen blijven staan voor het volgende potje.',
+        [{label:'Naar statistieken', primary:true, fn:() => showView('vStats')}]);
+  };
+  $('btnNew').onclick = () => {
+    if (!started()) return;
+    ask('Nieuw potje', done()
+        ? 'Dit potje is compleet. Opslaan in je historie?'
+        : 'Dit potje is nog niet af. Toch afsluiten?', [
+      {label:'Opslaan en opnieuw', primary:true, fn:() => { archive(); resetScores(); renderStats(); }},
+      {label:'Wissen zonder opslaan', fn:resetScores}
+    ]);
+  };
+
+  // --- statistieken ------------------------------------------------------
+  function statsPerPlayer(){
+    const by = new Map();
+    // Chronologisch, zodat winreeksen kloppen.
+    const games = H.slice().sort((a,b) => (a.ts < b.ts ? -1 : 1));
+    games.forEach(g => {
+      const best = Math.max(...g.players.map(p => p.total));
+      g.players.forEach(p => {
+        const k = p.name;
+        if (!by.has(k)) by.set(k, {name:k, scores:[], wins:0, bonus:0, yatzees:0, streak:0, run:0});
+        const s = by.get(k);
+        s.scores.push(p.total);
+        if (p.bonus) s.bonus++;
+        s.yatzees += p.yatzees || 0;
+        if (p.total === best) { s.wins++; s.run++; s.streak = Math.max(s.streak, s.run); }
+        else s.run = 0;
+      });
+    });
+    return [...by.values()].map(s => {
+      const n = s.scores.length;
+      return {...s, games:n,
+        avg: Math.round(s.scores.reduce((a,b) => a+b, 0) / n),
+        best: Math.max(...s.scores),
+        worst: Math.min(...s.scores),
+        winPct: Math.round(s.wins / n * 100),
+        bonusPct: Math.round(s.bonus / n * 100),
+        last: s.scores.slice(-10)
+      };
+    }).sort((a,b) => b.avg - a.avg);
+  }
+
+  // Sparkline: één reeks, dus geen legenda nodig — de kaart eromheen benoemt 'm.
+  // Exacte cijfers staan in de historie eronder; dit toont alleen de vorm.
+  function spark(vals, w = 116, h = 30){
+    if (vals.length < 2) return '';
+    const lo = Math.min(...vals), hi = Math.max(...vals), span = (hi - lo) || 1;
+    const step = w / (vals.length - 1);
+    const pt = (v,i) => [i * step, h - 5 - ((v - lo) / span) * (h - 10)];
+    const d = vals.map((v,i) => {
+      const [x,y] = pt(v,i);
+      return (i ? 'L' : 'M') + x.toFixed(1) + ' ' + y.toFixed(1);
+    }).join(' ');
+    const [lx,ly] = pt(vals[vals.length-1], vals.length-1);
+    return `<svg viewBox="0 0 ${w} ${h}" width="${w}" height="${h}" aria-hidden="true">
+      <path d="${d}" fill="none" stroke="var(--acc)" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round"/>
+      <circle cx="${lx.toFixed(1)}" cy="${ly.toFixed(1)}" r="4"
+              fill="var(--acc)" stroke="var(--panel)" stroke-width="2"/>
+    </svg>`;
+  }
+
+  const fmtDate = ts => {
+    const d = new Date(ts);
+    return isNaN(d) ? '' : d.toLocaleDateString('nl-NL', {day:'numeric', month:'short', year:'numeric'})
+                          + ' · ' + d.toLocaleTimeString('nl-NL', {hour:'2-digit', minute:'2-digit'});
+  };
+
+  function renderStats(){
+    const body = $('statsBody');
+    if (!H.length){
+      body.innerHTML = `<p class="empty-note">Nog geen potjes opgeslagen.<br>
+        Speel een potje uit en tik op <b>Opslaan</b> — daarna verschijnen hier
+        gemiddelden, records en je volledige historie.</p>`;
+      return;
+    }
+
+    const ps = statsPerPlayer();
+    let h = '<section><h2>Ranglijst — op gemiddelde</h2><div class="stack">';
+    ps.forEach(s => {
+      const sp = spark(s.last);
+      h += `<div class="pcard">
+        <div class="pc-top"><span class="pc-name">${esc(s.name)}</span>
+          <span class="pc-avg">${s.avg}<small>gem.</small></span></div>
+        <div class="pc-sub">${s.games} ${s.games === 1 ? 'potje' : 'potjes'} ·
+          ${s.wins}× gewonnen (${s.winPct}%) · beste ${s.best} · laagste ${s.worst} ·
+          bonus ${s.bonusPct}%</div>
+        ${sp ? `<div class="pc-spark">${sp}
+          <span class="pc-last">laatste ${s.last.length}: nu ${s.last[s.last.length-1]}</span></div>` : ''}
+      </div>`;
+    });
+    h += '</div></section>';
+
+    // Records
+    const flat = H.flatMap(g => g.players.map(p => ({...p, ts:g.ts})));
+    const top = flat.reduce((a,b) => b.total > a.total ? b : a);
+    const yTop = flat.reduce((a,b) => (b.yatzees||0) > (a.yatzees||0) ? b : a);
+    const strk = ps.reduce((a,b) => b.streak > a.streak ? b : a);
+    h += `<section><h2>Records</h2>
+      <div class="rec"><b>${top.total}</b><span class="rec-lb">Hoogste potje
+        <small>${esc(top.name)} · ${fmtDate(top.ts)}</small></span></div>
+      <div class="rec"><b>${yTop.yatzees || 0}</b><span class="rec-lb">Meeste Yatzees in één potje
+        <small>${(yTop.yatzees ? esc(yTop.name) + ' · ' + fmtDate(yTop.ts) : 'nog geen Yatzee gegooid')}</small></span></div>
+      <div class="rec"><b>${strk.streak}</b><span class="rec-lb">Langste reeks gewonnen potjes
+        <small>${esc(strk.name)}</small></span></div>
+    </section>`;
+
+    // Historie, nieuwste eerst
+    const games = H.slice().sort((a,b) => (a.ts < b.ts ? 1 : -1));
+    h += `<section><h2>Historie — ${H.length} ${H.length === 1 ? 'potje' : 'potjes'}</h2>`;
+    games.forEach(g => {
+      const best = Math.max(...g.players.map(p => p.total));
+      const line = g.players.map(p =>
+        `<span class="${p.total === best ? 'h-win' : ''}">${esc(p.name)} ${p.total}</span>`
+      ).join(' · ');
+      h += `<div class="hrow">
+        <div class="h-main"><div class="h-date">${fmtDate(g.ts)}</div>
+          <div class="h-players">${line}</div></div>
+        <button class="h-del" data-ts="${esc(g.ts)}" aria-label="Potje verwijderen">✕</button>
+      </div>`;
+    });
+    h += '</section>';
+
+    body.innerHTML = h;
+  }
+
+  $('statsBody').addEventListener('click', e => {
+    const d = e.target.closest('.h-del');
+    if (!d) return;
+    ask('Potje verwijderen', 'Dit potje wordt uit je historie en statistieken gehaald.', [
+      {label:'Verwijderen', fn:() => {
+        H = H.filter(g => g.ts !== d.dataset.ts);
+        saveHist(); renderStats();
+      }}
+    ]);
+  });
+
+  // --- views -------------------------------------------------------------
+  function showView(id){
+    document.querySelectorAll('.view').forEach(v => v.classList.toggle('on', v.id === id));
+    document.querySelectorAll('nav.tabs button').forEach(b => b.classList.toggle('on', b.dataset.view === id));
+    const stats = id === 'vStats';
+    $('btnPlayers').classList.toggle('hide', stats);
+    $('btnNew').classList.toggle('hide', stats);
+    $('btnBackup').classList.toggle('hide', !stats);
+    if (stats) renderStats();
+  }
+  document.querySelector('nav.tabs').addEventListener('click', e => {
+    const b = e.target.closest('button');
+    if (b) showView(b.dataset.view);
+  });
+
+  // --- back-up -----------------------------------------------------------
+  $('btnBackup').onclick = () => {
+    $('bkText').value = JSON.stringify({app:'yatzee', v:1, history:H});
+    $('bkMsg').textContent = `${H.length} ${H.length === 1 ? 'potje' : 'potjes'} in deze back-up.`;
+    $('bsheet').classList.add('on');
+  };
+  $('bkCopy').onclick = async () => {
+    const t = $('bkText');
+    t.select();
+    try {
+      await navigator.clipboard.writeText(t.value);
+      $('bkMsg').textContent = 'Gekopieerd naar je klembord.';
+    } catch(e){
+      $('bkMsg').textContent = 'Kopiëren lukte niet — houd de tekst ingedrukt en kies Kopieer.';
+    }
+  };
+  $('bkImport').onclick = () => {
+    let inc;
+    try { inc = JSON.parse($('bkText').value); }
+    catch(e){ $('bkMsg').textContent = 'Dit is geen geldige back-up.'; return; }
+    const list = Array.isArray(inc) ? inc : (inc && inc.history);
+    if (!Array.isArray(list)){ $('bkMsg').textContent = 'Geen potjes gevonden in deze tekst.'; return; }
+    const seen = new Set(H.map(g => g.ts));
+    const add = list.filter(g => g && g.ts && Array.isArray(g.players) && !seen.has(g.ts));
+    H = H.concat(add);
+    saveHist(); renderStats();
+    $('bkMsg').textContent = add.length
+      ? `${add.length} ${add.length === 1 ? 'potje' : 'potjes'} toegevoegd.`
+      : 'Alles zat er al in — niets toegevoegd.';
+  };
+  $('bkClose').onclick = () => $('bsheet').classList.remove('on');
+  $('bsheet').addEventListener('click', e => {
+    if (e.target.id === 'bsheet') $('bsheet').classList.remove('on');
+  });
+
   // --- spelers -----------------------------------------------------------
   function renderPlayers(){
     $('plist').innerHTML = S.players.map((p,i) => `
@@ -344,27 +688,21 @@
   $('plist').addEventListener('click', e => {
     const d = e.target.closest('[data-del]');
     if (!d) return;
-    if (confirm(`${S.players[+d.dataset.del].name} verwijderen?`)) {
-      S.players.splice(+d.dataset.del, 1);
-      save(); renderPlayers(); render();
-    }
+    const i = +d.dataset.del;
+    ask('Speler verwijderen', `${S.players[i].name} uit dit potje halen? Eerder opgeslagen potjes blijven staan.`, [
+      {label:'Verwijderen', fn:() => { S.players.splice(i,1); save(); renderPlayers(); render(); }}
+    ]);
   });
   $('pAdd').onclick = () => {
     if (S.players.length >= MAX_P) return;
     S.players.push({name:`Speler ${S.players.length+1}`, sc:{}});
     save(); renderPlayers(); render();
   };
-  $('pDone').onclick = () => $('psheet').classList.remove('on');
+  $('pDone').onclick = () => { $('psheet').classList.remove('on'); render(); };
   $('btnPlayers').onclick = () => { renderPlayers(); $('psheet').classList.add('on'); };
   $('psheet').addEventListener('click', e => {
     if (e.target.id === 'psheet') $('psheet').classList.remove('on');
   });
-
-  $('btnNew').onclick = () => {
-    if (!confirm('Nieuw potje starten? Scores worden gewist, namen blijven.')) return;
-    S.players.forEach(p => p.sc = {});
-    save(); render();
-  };
 
   // --- thema: systeem → licht → donker -----------------------------------
   const THEMES = ['auto','light','dark'];
@@ -381,7 +719,7 @@
     else document.documentElement.dataset.theme = theme;
     // Statusbalk meekleuren met wat er daadwerkelijk getoond wordt.
     const shown = theme === 'auto' ? (sysDark.matches ? 'dark' : 'light') : theme;
-    $('tcolor').setAttribute('content', TCOL[shown]);
+    const tc = $('tcolor'); if (tc) tc.setAttribute('content', TCOL[shown]);
     const b = $('btnTheme');
     b.textContent = ICON[theme];
     b.setAttribute('aria-label', LABEL[theme]);
