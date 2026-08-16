@@ -104,6 +104,8 @@
   tr.calc td, tr.calc .cat{background:var(--calc); font-weight:700}
   tr.calc td{color:var(--dim); font-size:16px}
   tr.bonus td.hit{color:var(--good)}
+  tr.bonus td.need{color:var(--txt); font-size:13.5px; font-weight:600}
+  tr.bonus td.miss{color:var(--dim); font-size:13px; font-weight:600}
   tr.total td{color:var(--acc); font-size:22px}
   tr.total .cat{font-size:15px}
   tr.sep td, tr.sep th{height:8px; border:0; background:var(--sep)}
@@ -192,6 +194,16 @@
   .prow input:focus{outline:none; border-color:var(--acc)}
   .prow .del{padding:12px 14px; color:var(--bad); font-size:20px; line-height:1}
   .setup .btn{width:100%; text-align:center; padding:14px; margin-top:8px}
+  .roster-head{display:flex; align-items:baseline; gap:8px; margin-top:16px}
+  .roster-head h3{flex:1; margin:0; font-size:12px; font-weight:700;
+    text-transform:uppercase; letter-spacing:.6px; color:var(--dim)}
+  .link{font-size:13px; font-weight:600; color:var(--acc); padding:4px 0}
+  .chips{display:flex; flex-wrap:wrap; gap:8px; margin-top:8px}
+  .chip{padding:9px 13px; border-radius:999px; background:var(--btn);
+    border:1px solid var(--line); font-size:14px; font-weight:600}
+  .chip:active{background:var(--acc); color:var(--on-acc)}
+  .chips.editing .chip{color:var(--bad); border-color:var(--bad)}
+  .chips.editing .chip::after{content:' ✕'}
   #bkText{
     width:100%; height:120px; padding:10px; border-radius:11px; background:var(--input);
     border:1px solid var(--line); color:var(--txt); font-size:12px;
@@ -253,6 +265,13 @@
     <div class="setup" style="padding:0; overflow-y:auto">
       <div id="plist"></div>
       <button class="btn" id="pAdd">+ Speler toevoegen</button>
+      <div class="roster hide" id="roster">
+        <div class="roster-head">
+          <h3 id="rosterTitle">Eerder gespeeld</h3>
+          <button class="link" id="rosterEdit">Bewerken</button>
+        </div>
+        <div class="chips" id="chips"></div>
+      </div>
       <button class="btn btn-acc" id="pDone">Klaar</button>
     </div>
   </div>
@@ -299,12 +318,13 @@
   ];
   const UPPER = ['d1','d2','d3','d4','d5','d6'];
   const BONUS_AT = 63, BONUS = 35;
-  const KEY = 'yatzee.v1', HKEY = 'yatzee.hist.v1';
-  const MIN_P = 2, MAX_P = 8;
+  const KEY = 'yatzee.v1', HKEY = 'yatzee.hist.v1', NKEY = 'yatzee.names.v1';
+  const MIN_P = 2, MAX_P = 8, MAX_N = 24;
 
   // --- state -------------------------------------------------------------
   let S = load() || newGame(['Speler 1','Speler 2']);
   let H = loadHist();
+  let N = loadNames();
 
   function newGame(names){ return {players: names.map(n => ({name:n, sc:{}}))}; }
   function load(){
@@ -319,8 +339,38 @@
       return Array.isArray(a) ? a : [];
     } catch(e){ return []; }
   }
+  function loadNames(){
+    try {
+      const a = JSON.parse(localStorage.getItem(NKEY));
+      return Array.isArray(a) ? a.filter(n => typeof n === 'string') : [];
+    } catch(e){ return []; }
+  }
   function save(){ try{ localStorage.setItem(KEY, JSON.stringify(S)); }catch(e){} }
   function saveHist(){ try{ localStorage.setItem(HKEY, JSON.stringify(H)); }catch(e){} }
+  function saveNames(){ try{ localStorage.setItem(NKEY, JSON.stringify(N)); }catch(e){} }
+
+  // --- namenlijst --------------------------------------------------------
+  // "Speler 3" is een plaatshouder, geen naam — die onthouden we niet.
+  const isPlaceholder = n => /^speler\s*\d*$/i.test(n.trim());
+  const sameName = (a,b) => a.trim().toLowerCase() === b.trim().toLowerCase();
+
+  function remember(names){
+    names.map(n => n.trim()).filter(n => n && !isPlaceholder(n)).forEach(n => {
+      N = N.filter(x => !sameName(x, n));
+      N.unshift(n);
+    });
+    N = N.slice(0, MAX_N);
+    saveNames();
+  }
+  // Vult een lege of nog naamloze plek; anders komt de speler erbij.
+  function useName(n){
+    if (S.players.some(p => sameName(p.name, n))) return;
+    const slot = S.players.findIndex(p => !p.name.trim() || isPlaceholder(p.name));
+    if (slot > -1) S.players[slot].name = n;
+    else if (S.players.length < MAX_P) S.players.push({name:n, sc:{}});
+    else return;
+    save(); renderPlayers(); render();
+  }
 
   // --- berekening --------------------------------------------------------
   const upperSum = p => UPPER.reduce((t,id) => t + (p.sc[id] ?? 0), 0);
@@ -376,8 +426,11 @@
     S.players.forEach(p => h += `<td>${upperSum(p)}</td>`);
     h += '</tr><tr class="calc bonus"><td class="cat">Bonus</td>';
     S.players.forEach(p => {
-      const b = hasBonus(p);
-      h += `<td class="${b?'hit':''}">${b ? '+'+BONUS : '–'}</td>`;
+      // Zolang het bovenvak niet vol is, tellen we af naar de bonusgrens.
+      const upDone = UPPER.every(id => p.sc[id] != null);
+      if (hasBonus(p))   h += `<td class="hit">+${BONUS}</td>`;
+      else if (upDone)   h += '<td class="miss">gemist</td>';
+      else               h += `<td class="need">nog ${BONUS_AT - upperSum(p)}</td>`;
     });
     h += '</tr><tr class="sep"><td colspan="' + (S.players.length+1) + '"></td></tr>';
 
@@ -474,6 +527,7 @@
       }))
     });
     saveHist();
+    remember(S.players.map(p => p.name));
   }
   function resetScores(){
     S.players.forEach(p => p.sc = {});
@@ -678,7 +732,29 @@
         ${S.players.length > MIN_P ? `<button class="del" data-del="${i}">✕</button>` : ''}
       </div>`).join('');
     $('pAdd').style.display = S.players.length >= MAX_P ? 'none' : '';
+    renderChips();
   }
+
+  let rosterEdit = false;
+  function renderChips(){
+    const free = N.filter(n => !S.players.some(p => sameName(p.name, n)));
+    $('roster').classList.toggle('hide', !N.length);
+    $('rosterTitle').textContent = rosterEdit ? 'Tik om te verwijderen' : 'Eerder gespeeld';
+    $('rosterEdit').textContent = rosterEdit ? 'Klaar' : 'Bewerken';
+    $('chips').classList.toggle('editing', rosterEdit);
+    const list = rosterEdit ? N : free;
+    $('chips').innerHTML = list.length
+      ? list.map(n => `<button class="chip" data-name="${esc(n)}">${esc(n)}</button>`).join('')
+      : '<span class="empty-note">Iedereen doet al mee.</span>';
+  }
+  $('rosterEdit').onclick = () => { rosterEdit = !rosterEdit; renderChips(); };
+  $('chips').addEventListener('click', e => {
+    const c = e.target.closest('.chip');
+    if (!c) return;
+    const n = c.dataset.name;
+    if (rosterEdit){ N = N.filter(x => !sameName(x, n)); saveNames(); renderChips(); }
+    else useName(n);
+  });
   $('plist').addEventListener('input', e => {
     if (e.target.tagName === 'INPUT') {
       S.players[+e.target.dataset.i].name = e.target.value || 'Speler';
@@ -698,7 +774,12 @@
     S.players.push({name:`Speler ${S.players.length+1}`, sc:{}});
     save(); renderPlayers(); render();
   };
-  $('pDone').onclick = () => { $('psheet').classList.remove('on'); render(); };
+  $('pDone').onclick = () => {
+    remember(S.players.map(p => p.name));
+    rosterEdit = false;
+    $('psheet').classList.remove('on');
+    render();
+  };
   $('btnPlayers').onclick = () => { renderPlayers(); $('psheet').classList.add('on'); };
   $('psheet').addEventListener('click', e => {
     if (e.target.id === 'psheet') $('psheet').classList.remove('on');
