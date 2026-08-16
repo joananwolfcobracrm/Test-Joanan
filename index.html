@@ -4,16 +4,40 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1, user-scalable=no">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="Yatzee">
-<meta name="theme-color" content="#0d1117">
+<meta name="theme-color" id="tcolor" content="#f7f4ee">
 <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Crect width='180' height='180' rx='40' fill='%230d1117'/%3E%3Cg fill='%23f5c518'%3E%3Ccircle cx='60' cy='60' r='14'/%3E%3Ccircle cx='120' cy='60' r='14'/%3E%3Ccircle cx='90' cy='90' r='14'/%3E%3Ccircle cx='60' cy='120' r='14'/%3E%3Ccircle cx='120' cy='120' r='14'/%3E%3C/g%3E%3C/svg%3E">
 <title>Yatzee Scores</title>
 <style>
+  /* Licht is de basis; donker wordt hieronder per token overschreven.
+     Drie standen: systeem (geen data-theme), of handmatig vastgezet. */
   :root{
+    color-scheme:light;
+    --bg:#f7f4ee; --panel:#fffdf9; --line:#ddd4c4; --line-soft:#ebe4d8;
+    --txt:#1f1c17; --dim:#7a7266; --acc:#9a6f00; --good:#1a7f37; --bad:#c02b1d;
+    --btn:#efe9dd; --btn-a:#e3dacb; --on-acc:#fffdf9; --empty:#c0b8a8;
+    --cell-a:#f0eadd; --calc:#f2ece1; --sep:#e8e0d2; --input:#fffdf9;
+    --scrim:rgba(58,48,28,.38);
+    --cell:56px;
+  }
+  @media (prefers-color-scheme:dark){
+    :root:not([data-theme="light"]){
+      color-scheme:dark;
+      --bg:#0d1117; --panel:#161b22; --line:#2a323d; --line-soft:#212934;
+      --txt:#e6edf3; --dim:#8b949e; --acc:#f5c518; --good:#3fb950; --bad:#f85149;
+      --btn:#21262d; --btn-a:#2d333b; --on-acc:#111; --empty:#3d444d;
+      --cell-a:#1c2430; --calc:#131a22; --sep:#0a0e14; --input:#0b1017;
+      --scrim:rgba(0,0,0,.6);
+    }
+  }
+  :root[data-theme="dark"]{
+    color-scheme:dark;
     --bg:#0d1117; --panel:#161b22; --line:#2a323d; --line-soft:#212934;
     --txt:#e6edf3; --dim:#8b949e; --acc:#f5c518; --good:#3fb950; --bad:#f85149;
-    --cell:56px;
+    --btn:#21262d; --btn-a:#2d333b; --on-acc:#111; --empty:#3d444d;
+    --cell-a:#1c2430; --calc:#131a22; --sep:#0a0e14; --input:#0b1017;
+    --scrim:rgba(0,0,0,.6);
   }
   *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
   html,body{margin:0;padding:0;height:100%}
@@ -31,14 +55,15 @@
     padding:10px 14px; border-bottom:1px solid var(--line);
     background:var(--panel); position:sticky; top:0; z-index:5;
   }
-  header h1{font-size:17px;margin:0;font-weight:700;letter-spacing:.3px;flex:1}
-  header h1 span{color:var(--acc)}
+  header h1{font-size:17px;margin:0;font-weight:700;letter-spacing:.3px;flex:1;
+    overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
   .btn{
-    padding:8px 12px; border-radius:9px; background:#21262d;
+    padding:8px 12px; border-radius:9px; background:var(--btn);
     border:1px solid var(--line); font-size:14px; font-weight:600;
   }
-  .btn:active{background:#2d333b}
-  .btn-acc{background:var(--acc); color:#111; border-color:var(--acc)}
+  .btn:active{background:var(--btn-a)}
+  .btn-icon{padding:8px 10px; font-size:15px; line-height:1.2}
+  .btn-acc{background:var(--acc); color:var(--on-acc); border-color:var(--acc)}
 
   /* ---------- scorecard ---------- */
   .wrap{overflow:auto; -webkit-overflow-scrolling:touch; padding-bottom:40px}
@@ -56,17 +81,17 @@
   thead .cat{z-index:4; background:var(--panel)}
   .cat small{display:block; color:var(--dim); font-size:11px; font-weight:400}
   td.score{min-width:72px; font-size:19px; font-weight:600; font-variant-numeric:tabular-nums}
-  td.score.empty{color:#3d444d}
+  td.score.empty{color:var(--empty)}
   td.score.zero{color:var(--bad)}
   td.score.void{color:var(--dim); text-decoration:line-through}
   td.score.yb{color:var(--good)}
-  td.score:active{background:#1c2430}
-  tr.calc td, tr.calc .cat{background:#131a22; font-weight:700}
+  td.score:active{background:var(--cell-a)}
+  tr.calc td, tr.calc .cat{background:var(--calc); font-weight:700}
   tr.calc td{color:var(--dim); font-size:16px}
   tr.bonus td.hit{color:var(--good)}
   tr.total td{color:var(--acc); font-size:22px}
   tr.total .cat{font-size:15px}
-  tr.sep td, tr.sep th{height:8px; border:0; background:#0a0e14}
+  tr.sep td, tr.sep th{height:8px; border:0; background:var(--sep)}
   .pname{display:block; font-weight:700; max-width:90px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; margin:0 auto}
   .plead{color:var(--acc)}
   .ptot{display:block; color:var(--dim); font-size:12px; font-weight:600}
@@ -74,7 +99,7 @@
   /* ---------- sheet ---------- */
   .sheet{
     position:fixed; inset:0; z-index:20; display:none;
-    background:rgba(0,0,0,.6); backdrop-filter:blur(2px);
+    background:var(--scrim); backdrop-filter:blur(2px);
   }
   .sheet.on{display:block}
   .sheet-in{
@@ -82,16 +107,19 @@
     border-top:1px solid var(--line); border-radius:18px 18px 0 0;
     padding:14px 14px calc(18px + env(safe-area-inset-bottom));
     animation:up .18s ease-out;
+    /* Lange keuzelijsten scrollen binnen de kaart; knoppen blijven bereikbaar. */
+    max-height:88vh; display:flex; flex-direction:column;
   }
   @keyframes up{from{transform:translateY(100%)}to{transform:translateY(0)}}
   .sheet h2{margin:0 0 2px; font-size:18px}
   .sheet p{margin:0 0 12px; color:var(--dim); font-size:13px}
-  .opts{display:grid; grid-template-columns:repeat(auto-fill,minmax(72px,1fr)); gap:8px}
+  .opts{display:grid; grid-template-columns:repeat(auto-fill,minmax(72px,1fr)); gap:8px;
+    overflow-y:auto; -webkit-overflow-scrolling:touch; align-content:start}
   .opt{
-    padding:14px 4px; border-radius:12px; background:#21262d; border:1px solid var(--line);
+    padding:14px 4px; border-radius:12px; background:var(--btn); border:1px solid var(--line);
     font-size:19px; font-weight:700; font-variant-numeric:tabular-nums;
   }
-  .opt:active{background:var(--acc); color:#111}
+  .opt:active{background:var(--acc); color:var(--on-acc)}
   .opt.zero{color:var(--bad)}
   .sheet-foot{display:flex; gap:8px; margin-top:14px}
   .sheet-foot .btn{flex:1; text-align:center; padding:13px}
@@ -101,7 +129,7 @@
   .setup h2{font-size:16px; margin:0 0 12px}
   .prow{display:flex; gap:8px; align-items:center; margin-bottom:8px}
   .prow input{
-    flex:1; padding:13px 12px; border-radius:11px; background:#0b1017;
+    flex:1; padding:13px 12px; border-radius:11px; background:var(--input);
     border:1px solid var(--line); color:var(--txt); font-size:16px;
     -webkit-user-select:text; user-select:text;
   }
@@ -113,7 +141,8 @@
 <body>
 
 <header>
-  <h1>YATZEE<span>·</span>scores</h1>
+  <h1>YATZEE</h1>
+  <button class="btn btn-icon" id="btnTheme" aria-label="Thema"></button>
   <button class="btn" id="btnPlayers">Spelers</button>
   <button class="btn" id="btnNew">Nieuw</button>
 </header>
@@ -337,6 +366,35 @@
     save(); render();
   };
 
+  // --- thema: systeem → licht → donker -----------------------------------
+  const THEMES = ['auto','light','dark'];
+  const ICON  = {auto:'◐', light:'☀', dark:'☾'};
+  const LABEL = {auto:'Thema: volgt systeem', light:'Thema: licht', dark:'Thema: donker'};
+  const TCOL  = {light:'#f7f4ee', dark:'#0d1117'};
+  const sysDark = matchMedia('(prefers-color-scheme: dark)');
+  let theme = 'auto';
+  try { theme = localStorage.getItem('yatzee.theme') || 'auto'; } catch(e){}
+  if (!THEMES.includes(theme)) theme = 'auto';
+
+  function applyTheme(){
+    if (theme === 'auto') document.documentElement.removeAttribute('data-theme');
+    else document.documentElement.dataset.theme = theme;
+    // Statusbalk meekleuren met wat er daadwerkelijk getoond wordt.
+    const shown = theme === 'auto' ? (sysDark.matches ? 'dark' : 'light') : theme;
+    $('tcolor').setAttribute('content', TCOL[shown]);
+    const b = $('btnTheme');
+    b.textContent = ICON[theme];
+    b.setAttribute('aria-label', LABEL[theme]);
+    b.setAttribute('title', LABEL[theme]);
+  }
+  $('btnTheme').onclick = () => {
+    theme = THEMES[(THEMES.indexOf(theme) + 1) % THEMES.length];
+    try { localStorage.setItem('yatzee.theme', theme); } catch(e){}
+    applyTheme();
+  };
+  sysDark.addEventListener('change', applyTheme);
+
+  applyTheme();
   render();
 })();
 </script>
